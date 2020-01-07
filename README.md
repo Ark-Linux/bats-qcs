@@ -5,10 +5,12 @@ linux 下安装bats
 
 
 git clone https://github.com/bats-core/bats-core.gitcd bats-core
+
 ./install.sh /usr/local
 
 
 安装完bats，在命令行输入bats kim.bats
+
 即可进行auto test
 
 WiFi是white_cat_wifi
