@@ -1,6 +1,5 @@
 #!/usr/bin/env bats
 
-
 @test "fastboot" {  
                                     
    
@@ -9,6 +8,7 @@
   sleep 90
    
 }
+
 
 
 @test "onboard" {  
@@ -28,9 +28,8 @@
 
 
 @test "connect to wifi" {  
-                         
- run adb shell "adk-message-send 'connectivity_wifi_connect {ssid:\"Kim\"password:\"123456789\" homeap:true}'"       
-  
+                        
+  run adb shell "adk-message-send 'connectivity_wifi_connect {ssid:\"white_cat_wifi\"password:\"cattish1313\" homeap:true}'"
   [ $status -eq 0 ]
   sleep 20
 }
@@ -39,13 +38,13 @@
 @test "exchange another wifi" {  
   run adb shell adk-message-send 'connectivity_wifi_onboard{}'
   sleep 1  
-  run adb shell "adk-message-send 'connectivity_wifi_connect {ssid:\"Kim\"password:\"123456789\" homeap:true}'" 
+  run adb shell "adk-message-send 'connectivity_wifi_connect {ssid:\"white_cat_wifi\"password:\"cattish1313\" homeap:true}'"
   [ $status -eq 0 ]
   sleep 20
                                                          
 }
 
-@test "wifi_stauts" {  
+@test "wifi_status" {  
   run echo `adb shell wpa_cli status >> log`
   [ $status -eq 0 ]
   sleep 1
@@ -55,30 +54,25 @@
 
 
 
-@test "bt_pair" {  
+@test "bt_pair" { 
   run adb shell adk-message-send 'connectivity_bt_enable{}'
-  sleep 2
+  sleep 5
   [ $status -eq 0 ]
-  run echo `adb shell adk-message-send 'connectivity_bt_pair{address:\"a4:\ca:\a0:\ae:\e6:\93\"}' > log_bt_pair`
+  run adb shell adk-message-send 'connectivity_bt_pair{address:\"a4:\ca:\a0:\ae:\e6:\93\"}'
   [ $status -eq 0 ] 
-  sleep 5
-  run echo `adb shell adk-message-send 'connectivity_bt_connect{address:\"a4:\ca:\a0:\ae:\e6:\93\"}' > log_bt_connect`
-  [ $status -eq 0 ] 
-  sleep 5
+  sleep 10
                                                         
 }
 
 @test "bt_connect" { 
-  run echo `adb shell adk-message-send 'connectivity_bt_pair{address:\"a4:\ca:\a0:\ae:\e6:\93\"}' > log_bt_pair`
-  [ $status -eq 0 ] 
-  sleep 1
-  run echo `adb shell adk-message-send 'connectivity_bt_connect{address:\"a4:\ca:\a0:\ae:\e6:\93\"}' > log_bt_connect`
+
+  run adb shell adk-message-send 'connectivity_bt_connect{address:\"a4:\ca:\a0:\ae:\e6:\93\"}'
   [ $status -eq 0 ] 
   sleep 10
-  run echo `adb shell adk-message-send 'connectivity_bt_connect{address:\"a4:\ca:\a0:\ae:\e6:\93\"}' > log_bt_connect`
+  run adb shell adk-message-send 'connectivity_bt_connect{address:\"a4:\ca:\a0:\ae:\e6:\93\"}'
   [ $status -eq 0 ]
   sleep 5
-  run echo `adb shell adk-message-send 'connectivity_bt_getstate{}'` 
+  run adb shell adk-message-send 'connectivity_bt_getstate{}'
   [ $status -eq 0 ]
   sleep 5  
 }
@@ -92,7 +86,13 @@
   sleep 3
   run adb reboot
   sleep 60
-  run adb shell "adk-message-send 'connectivity_wifi_connect {ssid:\"Kim\"password:\"123456789\" homeap:true}'" 
+  run adb shell adk-message-send 'connectivity_wifi_onboard{}'
+  sleep 10
+ 
+  run adb shell "adk-message-send 'connectivity_wifi_connect {ssid:\"white_cat_wifi\"password:\"cattish1313\" homeap:true}'" 
+  sleep 20 
+  [ $status -eq 0 ]
+  run adb shell adk-message-send 'connectivity_wifi_completeonboarding{}'
   sleep 20 
   [ $status -eq 0 ]
   
@@ -109,11 +109,48 @@
 
 
 @test "alexa_onboarding" { 
-  run echo ` adb shell adk-message-monitor -a > alexa_log &`
-  
+  run adb push /home/pi/Desktop/fastboot_package/alexafile/alerts.db /data
   [ $status -eq 0 ]
-  sleep 1
-  run echo `adb shell adk-message-send 'voiceui_start_onboarding{client:\"AVS\"}'` 
+  sleep 2
+  run adb push /home/pi/Desktop/fastboot_package/alexafile/AlexaClientSDKConfig.json /data
+  [ $status -eq 0 ]
+  sleep 2
+  run adb push /home/pi/Desktop/fastboot_package/alexafile/cblAuthDelegate.db /data
+  [ $status -eq 0 ]
+  sleep 2
+  run adb push /home/pi/Desktop/fastboot_package/alexafile/certifiedsender.db /data
+  [ $status -eq 0 ]
+  sleep 2 
+  run adb push /home/pi/Desktop/fastboot_package/alexafile/devicesettings.db /data
+  [ $status -eq 0 ]
+  sleep 2
+  run adb push /home/pi/Desktop/fastboot_package/alexafile/entropy_file /data
+  [ $status -eq 0 ]
+  sleep 2
+  run adb push /home/pi/Desktop/fastboot_package/alexafile/miscDatabase.db /data
+  [ $status -eq 0 ]
+  sleep 2
+  run adb push /home/pi/Desktop/fastboot_package/alexafile/notifications.db /data
+  [ $status -eq 0 ]
+  sleep 2
+  run adb push /home/pi/Desktop/fastboot_package/alexafile/settingsca.db /data
+  [ $status -eq 0 ]
+  sleep 2
+  run adb push /home/pi/Desktop/fastboot_package/alexafile/voiceDumpAVS /data/voice-ui-framework
+  sleep 2
+  [ $status -eq 0 ]
+  run adb reboot
+  [ $status -eq 0 ]
+  sleep 80
+  run adb shell "adk-message-send 'connectivity_wifi_connect {ssid:\"white_cat_wifi\"password:\"cattish1313\" homeap:true}'" 
+  [ $status -eq 0 ]
+  sleep 20 
+  run adb shell adk-message-send 'connectivity_wifi_completeonboarding{}'
+  sleep 20 
+  [ $status -eq 0 ]
+  run adb shell "adk-message-send 'voiceui_start_onboarding{client:\"AVS\"}'"
+  [ $status -eq 0 ]
+  sleep 2 
   [ $status -eq 0 ]
   sleep 10
 }
