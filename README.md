@@ -1,12 +1,10 @@
 # bats-qcs
 linux 下安装bats
 
-用源码安装
+安装
 
+sudo apt-get install bats
 
-git clone https://github.com/bats-core/bats-core.gitcd bats-core
-
-./install.sh /usr/local
 
 
 安装完bats，
