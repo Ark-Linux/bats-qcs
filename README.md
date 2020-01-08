@@ -1,6 +1,5 @@
 # bats-qcs
-linux 下安装bats
-
+ps:因为树莓派的命令行的语法有些不同，所以暂时仅限于在树莓派上运行
 安装bats
 
 sudo apt-get install bats
