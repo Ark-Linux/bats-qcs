@@ -13,9 +13,9 @@ sudo apt-get install adb
 
 安装完bats，fastboot adb
 
-把kim.bats 和 alexafile 复制到fastboot 的目录下
+把kim.bats test0.wav alexafile 复制到fastboot 的目录下
 
-修改kim.bats里面的Alexafile的路径
+修改kim.bats里面的Alexafile,test0.wav路径
 
 在命令行输入bats kim.bats
 
