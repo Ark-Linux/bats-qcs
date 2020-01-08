@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 
-@test "fastboot" {  
-                                    
-   
+
+
+@test "fastboot_test" {  
   run echo `python fastboot_all.py > log`                                           
   [ $status -eq 0 ]
   sleep 90
@@ -10,8 +10,7 @@
 }
 
 
-
-@test "onboard" {  
+@test "wifi_onboard" {  
                                     
   run adb shell adk-message-send 'connectivity_wifi_onboard{}'                                            
   [ $status -eq 0 ]
@@ -19,7 +18,7 @@
    
 }
 
-@test "country code" {  
+@test "country_code" {  
   run echo `adb shell sed -n '99p' /etc/misc/wifi/sta_mode_hostapd.conf  >> log`
   [ $status -eq 0 ]
   sleep 1
@@ -27,7 +26,7 @@
 
 
 
-@test "connect to wifi" {  
+@test "connect_to_wifi" {  
                         
   run adb shell "adk-message-send 'connectivity_wifi_connect {ssid:\"white_cat_wifi\"password:\"cattish1313\" homeap:true}'"
   [ $status -eq 0 ]
@@ -35,7 +34,7 @@
 }
 
 
-@test "exchange another wifi" {  
+@test "exchange_another_wifi" {  
   run adb shell adk-message-send 'connectivity_wifi_onboard{}'
   sleep 1  
   run adb shell "adk-message-send 'connectivity_wifi_connect {ssid:\"white_cat_wifi\"password:\"cattish1313\" homeap:true}'"
@@ -78,11 +77,11 @@
 }
 
 
-@test "exchange wifi code" {  
+@test "exchange_wifi_code" {  
                                    
   run adb shell adk-message-send 'connectivity_wifi_onboard{}'         
   sleep 5
-  run echo `adb shell adkcfg -f /data/adk.connectivity.wifi.db write connectivity.wifi.onboard_ap_country_code CF --ignore`
+  run echo `adb shell adkcfg -f /data/adk.connectivity.wifi.db write connectivity.wifi.onboard_ap_country_code CN --ignore`
   sleep 3
   run adb reboot
   sleep 60
@@ -141,17 +140,30 @@
   [ $status -eq 0 ]
   run adb reboot
   [ $status -eq 0 ]
-  sleep 80
+  sleep 40  
   run adb shell "adk-message-send 'connectivity_wifi_connect {ssid:\"white_cat_wifi\"password:\"cattish1313\" homeap:true}'" 
   [ $status -eq 0 ]
   sleep 20 
   run adb shell adk-message-send 'connectivity_wifi_completeonboarding{}'
   sleep 20 
   [ $status -eq 0 ]
-  run adb shell "adk-message-send 'voiceui_start_onboarding{client:\"AVS\"}'"
-  [ $status -eq 0 ]
-  sleep 2 
-  [ $status -eq 0 ]
   sleep 10
 }
+
+
+@test "audio_auto_test" {  
+ run adb shell "adk-message-send 'voiceui_start_onboarding{client:\"AVS\"}'"
+  sleep 2 
+  run aplay test0.wav
+  [ $status -eq 0 ]
+  sleep 6
+  run aplay test0.wav
+ [ $status -eq 0 ]
+  sleep 6
+ run aplay test0.wav
+ [ $status -eq 0 ]
+  sleep 6
+}
+
+
 
